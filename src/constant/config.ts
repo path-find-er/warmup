@@ -1,7 +1,6 @@
 export const siteConfig = {
-  title: 'Next.js + Tailwind CSS + TypeScript Starter',
+  title: 'Brain Warmup game',
   description:
-    'A starter for Next.js, Tailwind CSS, and TypeScript with Absolute Import, Seo, Link component, pre-configured with Husky',
-  /** Without additional '/' on the end, e.g. https://theodorusclarence.com */
-  url: 'https://tsnext-tw.thcl.dev',
+    'Brain Warmup game is a game to train your brain to be more active and sharp.',
+  url: 'https://warmup.vercel.com',
 };

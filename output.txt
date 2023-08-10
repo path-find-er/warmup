@@ -1,0 +1,100 @@
+total: 2083
+
+game/
+  Game.tsx
+  GameSettings.tsx
+  GameDisplay.tsx
+  ScoreHistory.tsx
+  settings/
+    TimeLimitSelector.tsx
+    OperationToggle.tsx
+    StartButton.tsx
+    DifficultySelector.tsx
+  display/
+    PauseButton.tsx
+    InputCell.tsx
+    InputRow.tsx
+
+---
+
+```typescript
+// src/components/game/Game.tsx
+import React from "react"; import { useReducer } from "react"; import gameReducer from "@/store"; import { initialState } from "@/store"; import GameDisplay from "./GameDisplay"; import GameSettings from "./GameSettings"; import ScoreHistory from "./ScoreHistory"; const Game: React.FC = () => { const [state, dispatch] = useReducer(gameReducer, initialState); return ( <div className="flex flex-col items-center bg-gray-100 p-8 min-h-screen"> <GameSettings dispatch={dispatch} /> <GameDisplay state={state} dispatch={dispatch} /> <ScoreHistory previousScores={state.previousScores} /> </div> ); }; export default Game; 
+```
+
+---
+
+```typescript
+// src/components/game/GameSettings.tsx
+import React from 'react'; import type { GameAction } from '@/store'; import DifficultySelector from './settings/DifficultySelector'; import OperationToggle from './settings/OperationToggle'; import StartButton from './settings/StartButton'; import TimeLimitSelector from './settings/TimeLimitSelector'; type GameSettingsProps = { dispatch: React.Dispatch<GameAction>; }; const GameSettings: React.FC<GameSettingsProps> = ({ dispatch }) => { return ( <div className='mb-4 flex w-full max-w-md flex-col rounded bg-white p-4 shadow-md'> <DifficultySelector dispatch={dispatch} /> <OperationToggle dispatch={dispatch} /> <TimeLimitSelector dispatch={dispatch} /> <StartButton dispatch={dispatch} /> </div> ); }; export default GameSettings; 
+```
+
+---
+
+```typescript
+// src/components/game/GameDisplay.tsx
+import React from 'react'; import { GameAction } from '@/store'; import InputRow from './display/InputRow'; import IntegerRow from './display/IntegerRow'; import PauseButton from './display/PauseButton'; import { GameState } from '@/types'; interface GameDisplayProps { state: GameState; dispatch: React.Dispatch<GameAction>; } const GameDisplay: React.FC<GameDisplayProps> = ({ state, dispatch }) => { const { challengeInteger, gameStatus, timeLimit } = state; return ( <div className='mt-4 flex w-full max-w-md flex-col rounded bg-white p-4 shadow-md'> <IntegerRow integers={challengeInteger} /> {gameStatus !== 'stopped' && ( <InputRow dispatch={dispatch} timeLimit={timeLimit} /> )} <PauseButton dispatch={dispatch} gameStatus={gameStatus} /> </div> ); }; export default GameDisplay; 
+```
+
+---
+
+```typescript
+// src/components/game/ScoreHistory.tsx
+ import React from 'react'; type ScoreHistoryProps = { previousScores: number[]; }; const ScoreHistory: React.FC<ScoreHistoryProps> = ({ previousScores }) => { return ( <div className="flex flex-col bg-white p-4 rounded shadow-md mt-4 w-full max-w-md"> <h2 className="text-lg font-semibold">Previous Scores</h2> <ul className="list-decimal list-inside"> {previousScores.length === 0 ? ( <p className="text-gray-500">No scores available.</p> ) : ( previousScores.map((score, index) => ( <li key={index} className="text-gray-700"> Round {index + 1}: {score} out of 10 </li> )) )} </ul> </div> ); }; export default ScoreHistory; 
+```
+
+---
+
+```typescript
+// src/components/game/settings/TimeLimitSelector.tsx
+import React from 'react'; import type { GameAction } from '@/store'; export const TimeLimitSelector: React.FC<{ dispatch: React.Dispatch<GameAction>; }> = ({ dispatch }) => ( <div className='flex items-center justify-between'> <label htmlFor='timeLimit' className='text-sm text-gray-700'> Time Limit (seconds): </label> <input id='timeLimit' type='range' min={0} max={30} className='h-2 w-2/3 appearance-none rounded-full bg-gray-300' onChange={(e) => dispatch({ type: 'SET_TIME_LIMIT', payload: parseInt(e.target.value, 10), }) } /> </div> ); export default TimeLimitSelector; 
+```
+
+---
+
+```typescript
+// src/components/game/settings/OperationToggle.tsx
+import React from 'react'; import type { GameAction } from '@/store'; import { Operation } from '@/types'; export const OperationToggle: React.FC<{ dispatch: React.Dispatch<GameAction>; }> = ({ dispatch }) => ( <div className='flex items-center justify-between'> <label className='text-sm text-gray-700' htmlFor='operation'> Operation: </label> <select id='operation' onChange={(e) => dispatch({ type: 'SET_OPERATION', payload: e.target.value as Operation, }) } className='rounded-md border p-2' > <option className='bg-blue-500 p-1 text-white' value='add'> Add </option> <option className='bg-gray-300 p-1' value='minus'> Minus </option> </select> </div> ); export default OperationToggle; 
+```
+
+---
+
+```typescript
+// src/components/game/settings/StartButton.tsx
+import React from 'react'; import type { GameAction } from '@/store'; export const StartButton: React.FC<{ dispatch: React.Dispatch<GameAction>; }> = ({ dispatch }) => ( <button onClick={() => dispatch({ type: 'START_GAME' })} className='rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700' > Start Game </button> ); export default StartButton; 
+```
+
+---
+
+```typescript
+// src/components/game/settings/DifficultySelector.tsx
+import React from 'react'; import type { GameAction } from '@/store'; export const DifficultySelector: React.FC<{ dispatch: React.Dispatch<GameAction>; }> = ({ dispatch }) => ( <div className='flex items-center justify-between'> <label htmlFor='difficulty' className='text-sm text-gray-700'> Difficulty Level (0-9): </label> <input id='difficulty' className='w-2/3' type='range' min={0} max={9} onChange={(e) => dispatch({ type: 'SET_DIFFICULTY', payload: parseInt(e.target.value, 10), }) } /> </div> ); export default DifficultySelector; 
+```
+
+---
+
+```typescript
+// src/components/game/display/PauseButton.tsx
+import React from 'react'; import { GameAction } from '@/store'; export const PauseButton: React.FC<{ dispatch: React.Dispatch<GameAction>; gameStatus: string; }> = ({ dispatch, gameStatus }) => ( <button className={`${ gameStatus === 'started' ? 'bg-red-500' : 'bg-green-500' } hover:${ gameStatus === 'started' ? 'bg-red-700' : 'bg-green-700' } rounded px-4 py-2 font-bold text-white`} onClick={() => dispatch({ type: gameStatus === 'started' ? 'PAUSE_GAME' : 'RESUME_GAME', }) } > {gameStatus === 'started' ? 'Pause' : 'Resume'} </button> ); export default PauseButton; 
+```
+
+---
+
+```typescript
+// src/components/game/display/InputCell.tsx
+import React, { useEffect, useRef, useState } from 'react'; import { GameAction } from '@/store'; export const InputCell: React.FC<{ index: number; dispatch: React.Dispatch<GameAction>; timeLimit: number; onTimeOut: () => void; }> = ({ index, dispatch, timeLimit, onTimeOut }) => { const [inputValue, setInputValue] = useState<string>(''); const timerRef = useRef<NodeJS.Timeout | null>(null); const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => { setInputValue(event.target.value); }; const handleInputBlur = () => { dispatch({ type: 'SET_INPUT', payload: { index, value: Number(inputValue) }, }); }; useEffect(() => { if (timeLimit > 0) { timerRef.current = setTimeout(() => { onTimeOut(); }, timeLimit * 1000); } return () => { if (timerRef.current) clearTimeout(timerRef.current); }; }, []); return ( <input className='border rounded-md p-2' type='number' value={inputValue} onChange={handleInputChange} onBlur={handleInputBlur} min={0} max={9} /> ); }; export default InputCell; 
+```
+
+---
+
+```typescript
+// src/components/game/display/InputRow.tsx
+import React from 'react'; import { GameAction } from '@/store'; import { InputCell } from './InputCell'; export const InputRow: React.FC<{ dispatch: React.Dispatch<GameAction>; timeLimit: number; }> = ({ dispatch, timeLimit }) => ( <div className='input-row'> {Array.from({ length: 10 }).map((_, index) => ( <InputCell key={index} index={index} dispatch={dispatch} timeLimit={timeLimit} onTimeOut={() => dispatch({ type: 'END_ROUND' })} /> ))} </div> ); export default InputRow; 
+```
+
+---
+
+```typescript
+// src/components/game/display/IntegerRow.tsx
+import React from 'react'; export const IntegerRow: React.FC<{ integers: number[] }> = ({ integers }) => ( <div className='integer-row'> {integers.map((num, idx) => ( <div key={idx} className='integer-cell'> {num} </div> ))} </div> ); export default IntegerRow; 
+```
