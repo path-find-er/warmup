@@ -40,7 +40,7 @@ export const InputCell: React.FC<{
   }, [isCurrent]); // Dependency array ensures this effect runs when isCurrent changes
 
   const classname =
-    ' mx-2 border border-gray-300 w-full text-center px-2 py-1 ';
+    ' sm:mx-2 border border-gray-300 h-full w-full text-center px-2 py-1 ';
 
   if (correct === false) {
     return <div className={`${classname} text-red-500`}>{attempt}</div>;
@@ -58,9 +58,7 @@ export const InputCell: React.FC<{
     );
   } else {
     return (
-      <div className={`${classname} h-full bg-slate-100 text-gray-700`}>
-        {attempt}
-      </div>
+      <div className={`${classname} bg-slate-100 text-gray-700`}>{attempt}</div>
     );
   }
 };

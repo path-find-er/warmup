@@ -40,7 +40,7 @@ const LevelDisplay: React.FC<GameDisplayProps> = ({ state, dispatch }) => {
       <div className='my-4 flex w-full flex-row rounded bg-white p-4 shadow-md'>
         {challenges.map((challenge, index) => (
           <div key={index} className='flex w-full flex-col items-center'>
-            <div className='mx-2 w-full border border-gray-300 px-2 py-1 text-center text-gray-700'>
+            <div className='w-full border border-gray-300 px-2 py-1 text-center text-gray-700 sm:mx-2'>
               {challenge.test}
             </div>
             <InputCell
