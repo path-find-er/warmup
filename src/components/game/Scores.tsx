@@ -15,8 +15,8 @@ const Scores: React.FC<ScoreRecords> = ({ previousScores }) => {
           <thead>
             <tr>
               <th className='border border-slate-600 p-1'> type</th>
-              <th className='border border-slate-600 p-1'> number</th>
-              <th className='border border-slate-600 p-1'> limit (s)</th>
+              <th className='border border-slate-600 p-1'> amount</th>
+              <th className='border border-slate-600 p-1'> limit </th>
               <th className='border border-slate-600 p-1'> Scores</th>
             </tr>
           </thead>
