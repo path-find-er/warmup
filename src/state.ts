@@ -2,7 +2,7 @@ import { Draft, produce } from 'immer';
 
 import {
   generateInitialLevel,
-  generateRandomChallenges,
+  generateSettings,
   next_level,
   validateAnswer,
 } from '@/utils';
@@ -15,11 +15,7 @@ export const initialState: GameState = {
     currentScore: 0,
     previousScores: [],
   },
-  settings: {
-    difficulty: 3,
-    operation: 'add',
-    timeLimit: 5,
-  },
+  settings: generateSettings(),
   isPaused: true,
 };
 
@@ -57,11 +53,6 @@ const gameReducer = produce((draft: Draft<GameState>, action: GameAction) => {
       next_level(draft, valid, index, attempt);
       break;
     }
-    case 'END_ROUND':
-      draft.scores.previousScores.push(draft.scores.currentScore);
-      draft.scores.currentScore = 0;
-      draft.level.challenges = generateRandomChallenges();
-      break;
   }
 }, initialState);
 

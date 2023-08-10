@@ -8,7 +8,7 @@ export const TimeLimitSelector: React.FC<{
 }> = ({ dispatch, timeLimit }) => (
   <div className='flex items-center justify-between'>
     <label htmlFor='timeLimit' className='text-sm text-gray-700'>
-      Time Limit (seconds):
+      Time Limit:
     </label>
     <input
       id='timeLimit'
@@ -22,7 +22,7 @@ export const TimeLimitSelector: React.FC<{
           payload: { timeLimit: parseInt(e.target.value) },
         })
       }
-      defaultValue={timeLimit}
+      value={timeLimit}
     />
   </div>
 );

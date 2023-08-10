@@ -1,6 +1,6 @@
 import { Draft } from 'immer';
 
-import { GameState, Level, Operation } from '@/types';
+import { difficultyRange, GameState, Level, Operation } from '@/types';
 
 export const generateRandomIntegers = (): number[] => {
   return Array.from({ length: 10 }, () => Math.floor(Math.random() * 10));
@@ -42,6 +42,17 @@ export const generateInitialLevel = () => {
   } as Level;
 };
 
+export const generateSettings = (numCompletedLevels = 0) => {
+  return {
+    difficulty: normalizeAnswer(
+      1 + Math.floor(numCompletedLevels / 2)
+    ) as difficultyRange,
+    // switch from add to subtract every level
+    operation: numCompletedLevels % 2 === 0 ? 'subtract' : ('add' as Operation),
+    timeLimit: Math.max(5 - numCompletedLevels * 0.2, 2),
+  };
+};
+
 export function next_level(
   draft: Draft<GameState>,
   valid: boolean,
@@ -49,7 +60,7 @@ export function next_level(
   attempt: number
 ) {
   draft.scores.currentScore += valid ? 1 : 0;
-  if (index < 9) {
+  if (index <= 8) {
     draft.level.challenges[index].attempt = attempt;
     draft.level.challenges[index].correct = valid;
     draft.level.currentChallenge = index + 1;
@@ -57,5 +68,6 @@ export function next_level(
     draft.scores.previousScores.push(draft.scores.currentScore);
     draft.scores.currentScore = 0;
     draft.level = generateInitialLevel();
+    draft.settings = generateSettings(draft.scores.previousScores.length);
   }
 }

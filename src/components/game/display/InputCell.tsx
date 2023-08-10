@@ -19,17 +19,21 @@ export const InputCell: React.FC<{
   const inputRef = useRef<HTMLInputElement | null>(null); // Create a ref
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseInt(event.target.value);
-    // check if newValue is a number between 0 and 9
-    if (newValue >= 0 && newValue <= 9) {
-      setInputValue(newValue);
-      dispatch({
-        type: 'ATTEMPT',
-        payload: { index: challengeIndex, attempt: newValue },
-      });
-      dispatch({ type: 'RESUME' });
-    } else {
-      setInputValue(0);
+    try {
+      const newValue = parseInt(event.target.value);
+      // check if newValue is a number
+      if (newValue >= 0 && newValue <= 9) {
+        setInputValue(newValue);
+        dispatch({
+          type: 'ATTEMPT',
+          payload: { index: challengeIndex, attempt: newValue },
+        });
+        dispatch({ type: 'RESUME' });
+      } else {
+        setInputValue(0);
+      }
+    } catch (error) {
+      throw new Error(error as string);
     }
   };
 
@@ -50,8 +54,13 @@ export const InputCell: React.FC<{
     return (
       <input
         ref={inputRef} // Attach the ref
+        type='tel'
+        pattern='[0-9]'
+        maxLength={1}
+        inputMode='numeric'
         className={`${classname} text-gray-700`}
-        contentEditable={true}
+        // clear current input on focus
+        onFocus={(event) => event.target.select()}
         onChange={handleInputChange}
         value={inputValue}
       />

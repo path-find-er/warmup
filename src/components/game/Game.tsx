@@ -5,18 +5,18 @@ import React, { useReducer } from 'react';
 import gameReducer from '@/state';
 import { initialState } from '@/state';
 
-import GameSettings from './GameSettings';
-import LevelDisplay from './LevelDisplay';
-import ScoreHistory from './ScoreHistory';
+import Level from './Level';
+import Scores from './Scores';
+import Settings from './Settings';
 
 const Game: React.FC = () => {
   const [state, dispatch] = useReducer(gameReducer, initialState);
 
   return (
-    <div className='flex h-screen w-screen flex-col items-center justify-center bg-gray-100 p-8'>
-      <GameSettings dispatch={dispatch} state={state} />
-      <LevelDisplay dispatch={dispatch} state={state} />
-      <ScoreHistory previousScores={state.scores.previousScores} />
+    <div className='flex h-screen w-screen flex-col-reverse items-center justify-center bg-gray-100 p-8 sm:flex-col'>
+      <Settings dispatch={dispatch} state={state} />
+      <Level dispatch={dispatch} state={state} />
+      <Scores previousScores={state.scores.previousScores} />
     </div>
   );
 };

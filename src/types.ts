@@ -64,5 +64,4 @@ export type GameAction =
       };
     }
   | { type: 'RESUME' }
-  | { type: 'PAUSE' }
-  | { type: 'END_ROUND' };
+  | { type: 'PAUSE' };
