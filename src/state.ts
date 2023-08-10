@@ -2,7 +2,7 @@ import { Draft, produce } from 'immer';
 
 import { validateAnswer } from '@/utils';
 
-import { difficultyRange, GameState, Operation } from '@/types';
+import { difficultyRange, GameState, Level, Operation } from '@/types';
 
 const generateRandomChallenges = () => {
   const numbers = Array(10)
@@ -16,19 +16,23 @@ const generateRandomChallenges = () => {
   return challenges;
 };
 
-export const initialState: GameState = {
-  level: {
+const generateInitialLevel = () => {
+  return {
     difficulty: 1,
     operation: 'add',
-    timeLimit: 1,
+    timeLimit: 3,
     challenges: generateRandomChallenges(),
     currentChallenge: 0,
-  },
+  } as Level;
+};
+
+export const initialState: GameState = {
+  level: generateInitialLevel(),
   scores: {
     currentScore: 0,
     previousScores: [],
   },
-  isPaused: true,
+  isPaused: false,
 };
 
 export type GameAction =
@@ -79,9 +83,18 @@ const gameReducer = produce((draft: Draft<GameState>, action: GameAction) => {
       break;
     case 'TOO_SLOW': {
       const { index, attempt } = action.payload;
-      handleChallenge(draft, index, attempt);
+      if (index < 9) {
+        draft.level.challenges[index].attempt = attempt;
+        draft.level.challenges[index].correct = false;
+        draft.level.currentChallenge = index + 1;
+      } else {
+        draft.scores.previousScores.push(draft.scores.currentScore);
+        draft.scores.currentScore = 0;
+        draft.level = generateInitialLevel();
+      }
       break;
     }
+
     case 'SET_DIFFICULTY':
       draft.level.difficulty = action.payload.difficulty;
       break;
@@ -100,7 +113,15 @@ const gameReducer = produce((draft: Draft<GameState>, action: GameAction) => {
         draft.level.operation
       );
       draft.scores.currentScore += valid ? 1 : 0;
-      handleChallenge(draft, index, attempt, valid);
+      if (index < 9) {
+        draft.level.challenges[index].attempt = attempt;
+        draft.level.challenges[index].correct = valid;
+        draft.level.currentChallenge = index + 1;
+      } else {
+        draft.scores.previousScores.push(draft.scores.currentScore);
+        draft.scores.currentScore = 0;
+        draft.level = generateInitialLevel();
+      }
       break;
     }
     case 'END_ROUND':
@@ -116,25 +137,3 @@ const gameReducer = produce((draft: Draft<GameState>, action: GameAction) => {
 }, initialState);
 
 export default gameReducer;
-
-const handleChallenge = (
-  draft: GameState,
-  index: number,
-  attempt: number,
-  correct?: boolean
-) => {
-  // check if index is greater than len(challenges)
-  if (index < 10) {
-    draft.level.challenges[index].attempt = attempt;
-    draft.level.challenges[index].correct =
-      correct !== undefined ? correct : false;
-    draft.level.currentChallenge = index + 1;
-  } else {
-    draft.scores.previousScores.push(draft.scores.currentScore);
-    draft.scores.currentScore = 0;
-    draft.level.challenges = generateRandomChallenges();
-    draft.level.currentChallenge = 0;
-  }
-
-  return draft;
-};
