@@ -27,7 +27,7 @@ const generateInitialLevel = () => {
 };
 
 export const initialState: GameState = {
-  level: generateInitialLevel(1),
+  level: generateInitialLevel(),
   scores: {
     currentScore: 0,
     previousScores: [],
