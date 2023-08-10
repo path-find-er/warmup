@@ -12,20 +12,25 @@ export type Level = {
   currentChallenge: number;
 };
 
-export type scores = {
-  currentScore: number;
-  previousScores: number[];
-};
-
 export type GameSettings = {
   difficulty: difficultyRange;
   timeLimit: number;
   operation: Operation;
 };
 
+export type historicalScore = {
+  score: number;
+  settings: GameSettings;
+};
+
+export type ScoreRecords = {
+  currentScore: number;
+  previousScores: historicalScore[];
+};
+
 export type GameState = {
   level: Level;
-  scores: scores;
+  scores: ScoreRecords;
   settings: GameSettings;
   isPaused: boolean;
 };

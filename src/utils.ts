@@ -65,7 +65,10 @@ export function next_level(
     draft.level.challenges[index].correct = valid;
     draft.level.currentChallenge = index + 1;
   } else {
-    draft.scores.previousScores.push(draft.scores.currentScore);
+    draft.scores.previousScores.push({
+      score: draft.scores.currentScore,
+      settings: draft.settings,
+    });
     draft.scores.currentScore = 0;
     draft.level = generateInitialLevel();
     draft.settings = generateSettings(draft.scores.previousScores.length);

@@ -16,7 +16,10 @@ const Game: React.FC = () => {
     <div className='flex h-screen w-screen flex-col-reverse items-center justify-center bg-gray-100 p-8 sm:flex-col'>
       <Settings dispatch={dispatch} state={state} />
       <Level dispatch={dispatch} state={state} />
-      <Scores previousScores={state.scores.previousScores} />
+      <Scores
+        currentScore={state.scores.currentScore}
+        previousScores={state.scores.previousScores}
+      />
     </div>
   );
 };
