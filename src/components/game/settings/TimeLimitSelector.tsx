@@ -8,14 +8,14 @@ export const TimeLimitSelector: React.FC<{
 }> = ({ dispatch, timeLimit }) => (
   <div className='flex items-center justify-between'>
     <label htmlFor='timeLimit' className='text-sm text-gray-700'>
-      Time Limit ({timeLimit}):
+      Time Limit (seconds):
     </label>
     <input
       id='timeLimit'
-      type='range'
+      className='focus:shadow-outline w-2/3 appearance-none rounded leading-tight text-gray-700 focus:outline-none'
+      type='number'
       min={1}
       max={10}
-      className='h-2 w-2/3 appearance-none rounded-full bg-gray-300'
       onChange={(e) =>
         dispatch({
           type: 'SET_TIME_LIMIT',

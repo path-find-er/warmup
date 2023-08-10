@@ -12,6 +12,10 @@ export const InputCell: React.FC<{
 }> = ({ challengeIndex, dispatch, correct, attempt, isCurrent }) => {
   const [inputValue, setInputValue] = useState<number | undefined>(attempt);
 
+  useEffect(() => {
+    setInputValue(attempt);
+  }, [attempt]);
+
   const inputRef = useRef<HTMLInputElement | null>(null); // Create a ref
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,6 +27,7 @@ export const InputCell: React.FC<{
         type: 'ATTEMPT',
         payload: { index: challengeIndex, attempt: newValue },
       });
+      dispatch({ type: 'RESUME_GAME' });
     } else {
       setInputValue(0);
     }

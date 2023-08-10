@@ -18,16 +18,16 @@ const generateRandomChallenges = () => {
 
 const generateInitialLevel = () => {
   return {
-    difficulty: 1,
+    difficulty: Math.floor(Math.random() * 5) + 3,
     operation: 'add',
-    timeLimit: 3,
+    timeLimit: 2,
     challenges: generateRandomChallenges(),
     currentChallenge: 0,
   } as Level;
 };
 
 export const initialState: GameState = {
-  level: generateInitialLevel(),
+  level: generateInitialLevel(1),
   scores: {
     currentScore: 0,
     previousScores: [],
