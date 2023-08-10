@@ -18,7 +18,7 @@ const generateRandomChallenges = () => {
 
 const generateInitialLevel = () => {
   return {
-    difficulty: Math.floor(Math.random() * 5) + 3,
+    difficulty: 5,
     operation: 'add',
     timeLimit: 2,
     challenges: generateRandomChallenges(),
