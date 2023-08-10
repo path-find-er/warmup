@@ -1,100 +1,76 @@
-total: 2083
+total: 2255
 
 game/
   Game.tsx
+  LevelDisplay.tsx
   GameSettings.tsx
-  GameDisplay.tsx
   ScoreHistory.tsx
   settings/
     TimeLimitSelector.tsx
     OperationToggle.tsx
-    StartButton.tsx
     DifficultySelector.tsx
   display/
     PauseButton.tsx
-    InputCell.tsx
-    InputRow.tsx
 
 ---
 
 ```typescript
 // src/components/game/Game.tsx
-import React from "react"; import { useReducer } from "react"; import gameReducer from "@/store"; import { initialState } from "@/store"; import GameDisplay from "./GameDisplay"; import GameSettings from "./GameSettings"; import ScoreHistory from "./ScoreHistory"; const Game: React.FC = () => { const [state, dispatch] = useReducer(gameReducer, initialState); return ( <div className="flex flex-col items-center bg-gray-100 p-8 min-h-screen"> <GameSettings dispatch={dispatch} /> <GameDisplay state={state} dispatch={dispatch} /> <ScoreHistory previousScores={state.previousScores} /> </div> ); }; export default Game; 
+'use client'; import React from 'react'; import { useReducer } from 'react'; import gameReducer from '@/state'; import { initialState } from '@/state'; import GameSettings from './GameSettings'; import LevelDisplay from './LevelDisplay'; import ScoreHistory from './ScoreHistory'; const Game: React.FC = () => { const [state, dispatch] = useReducer(gameReducer, initialState); return ( <div className='flex h-screen w-screen flex-col items-center justify-center bg-gray-100 p-8'> <GameSettings dispatch={dispatch} state={state} /> <LevelDisplay state={state} dispatch={dispatch} /> <ScoreHistory previousScores={state.scores.previousScores} /> </div> ); }; export default Game; 
+```
+
+---
+
+```typescript
+// src/components/game/LevelDisplay.tsx
+import React, { useEffect, useRef } from 'react'; import InputCell from '@/components/game/display/InputCell'; import PauseButton from './display/PauseButton'; import { GameAction } from '@/types'; import { GameState } from '@/types'; interface GameDisplayProps { state: GameState; dispatch: React.Dispatch<GameAction>; } const LevelDisplay: React.FC<GameDisplayProps> = ({ state, dispatch }) => { const { level: { challenges, currentChallenge }, settings: { timeLimit }, isPaused, } = state; const timerRef = useRef<NodeJS.Timeout | null>(null); useEffect(() => { if (timeLimit > 0 && !isPaused) { timerRef.current = setTimeout(() => { const newAttempt = challenges[currentChallenge].attempt; dispatch({ type: 'TOO_SLOW', payload: { index: currentChallenge, attempt: newAttempt ?? 0 }, }); }, timeLimit * 1000); } return () => { if (timerRef.current) clearTimeout(timerRef.current); }; }, [challenges, currentChallenge, dispatch, isPaused, timeLimit]); return ( <> <div className='my-4 flex w-full flex-row rounded bg-white p-4 shadow-md'> {challenges.map((challenge, index) => ( <div key={index} className='flex w-full flex-col items-center'> <div className='w-full border border-gray-300 px-2 py-1 text-center text-gray-700 sm:mx-2'> {challenge.test} </div> <InputCell challengeIndex={index} dispatch={dispatch} attempt={challenge.attempt} correct={challenge.correct} isCurrent={state.level.currentChallenge === index} /> </div> ))} </div> <PauseButton dispatch={dispatch} isPaused={isPaused} /> </> ); }; export default LevelDisplay; 
 ```
 
 ---
 
 ```typescript
 // src/components/game/GameSettings.tsx
-import React from 'react'; import type { GameAction } from '@/store'; import DifficultySelector from './settings/DifficultySelector'; import OperationToggle from './settings/OperationToggle'; import StartButton from './settings/StartButton'; import TimeLimitSelector from './settings/TimeLimitSelector'; type GameSettingsProps = { dispatch: React.Dispatch<GameAction>; }; const GameSettings: React.FC<GameSettingsProps> = ({ dispatch }) => { return ( <div className='mb-4 flex w-full max-w-md flex-col rounded bg-white p-4 shadow-md'> <DifficultySelector dispatch={dispatch} /> <OperationToggle dispatch={dispatch} /> <TimeLimitSelector dispatch={dispatch} /> <StartButton dispatch={dispatch} /> </div> ); }; export default GameSettings; 
-```
-
----
-
-```typescript
-// src/components/game/GameDisplay.tsx
-import React from 'react'; import { GameAction } from '@/store'; import InputRow from './display/InputRow'; import IntegerRow from './display/IntegerRow'; import PauseButton from './display/PauseButton'; import { GameState } from '@/types'; interface GameDisplayProps { state: GameState; dispatch: React.Dispatch<GameAction>; } const GameDisplay: React.FC<GameDisplayProps> = ({ state, dispatch }) => { const { challengeInteger, gameStatus, timeLimit } = state; return ( <div className='mt-4 flex w-full max-w-md flex-col rounded bg-white p-4 shadow-md'> <IntegerRow integers={challengeInteger} /> {gameStatus !== 'stopped' && ( <InputRow dispatch={dispatch} timeLimit={timeLimit} /> )} <PauseButton dispatch={dispatch} gameStatus={gameStatus} /> </div> ); }; export default GameDisplay; 
+import React from 'react'; import DifficultySelector from './settings/DifficultySelector'; import OperationToggle from './settings/OperationToggle'; import TimeLimitSelector from './settings/TimeLimitSelector'; import { GameAction, GameState } from '@/types'; type GameSettingsProps = { dispatch: React.Dispatch<GameAction>; state: GameState; }; const GameSettings: React.FC<GameSettingsProps> = ({ dispatch, state }) => { return ( <div className='mb-4 flex w-full max-w-md flex-col gap-2 rounded bg-white p-4 shadow-md'> <DifficultySelector dispatch={dispatch} difficulty={state.settings.difficulty} /> <OperationToggle dispatch={dispatch} /> <TimeLimitSelector dispatch={dispatch} timeLimit={state.settings.timeLimit} /> </div> ); }; export default GameSettings; 
 ```
 
 ---
 
 ```typescript
 // src/components/game/ScoreHistory.tsx
- import React from 'react'; type ScoreHistoryProps = { previousScores: number[]; }; const ScoreHistory: React.FC<ScoreHistoryProps> = ({ previousScores }) => { return ( <div className="flex flex-col bg-white p-4 rounded shadow-md mt-4 w-full max-w-md"> <h2 className="text-lg font-semibold">Previous Scores</h2> <ul className="list-decimal list-inside"> {previousScores.length === 0 ? ( <p className="text-gray-500">No scores available.</p> ) : ( previousScores.map((score, index) => ( <li key={index} className="text-gray-700"> Round {index + 1}: {score} out of 10 </li> )) )} </ul> </div> ); }; export default ScoreHistory; 
+ import React from 'react'; type ScoreHistoryProps = { previousScores: number[]; }; const ScoreHistory: React.FC<ScoreHistoryProps> = ({ previousScores }) => { return ( <div className='mt-4 flex w-full max-w-md flex-col rounded bg-white p-4 shadow-md'> <h2 className='text-lg font-semibold'>Previous Scores</h2> <ul className='list-inside list-decimal'> {previousScores.length === 0 ? ( <p className='text-gray-500'>No scores available.</p> ) : ( previousScores.map((score, index) => ( <li key={index} className='text-gray-700'> Round {index + 1}: {score} out of 10 </li> )) )} </ul> </div> ); }; export default ScoreHistory; 
 ```
 
 ---
 
 ```typescript
 // src/components/game/settings/TimeLimitSelector.tsx
-import React from 'react'; import type { GameAction } from '@/store'; export const TimeLimitSelector: React.FC<{ dispatch: React.Dispatch<GameAction>; }> = ({ dispatch }) => ( <div className='flex items-center justify-between'> <label htmlFor='timeLimit' className='text-sm text-gray-700'> Time Limit (seconds): </label> <input id='timeLimit' type='range' min={0} max={30} className='h-2 w-2/3 appearance-none rounded-full bg-gray-300' onChange={(e) => dispatch({ type: 'SET_TIME_LIMIT', payload: parseInt(e.target.value, 10), }) } /> </div> ); export default TimeLimitSelector; 
+import React from 'react'; import type { GameAction } from '@/types'; export const TimeLimitSelector: React.FC<{ dispatch: React.Dispatch<GameAction>; timeLimit: number; }> = ({ dispatch, timeLimit }) => ( <div className='flex items-center justify-between'> <label htmlFor='timeLimit' className='text-sm text-gray-700'> Time Limit (seconds): </label> <input id='timeLimit' className='focus:shadow-outline w-2/3 appearance-none rounded leading-tight text-gray-700 focus:outline-none' type='number' min={1} max={10} onChange={(e) => dispatch({ type: 'UPDATE_TIME_LIMIT', payload: { timeLimit: parseInt(e.target.value) }, }) } defaultValue={timeLimit} /> </div> ); export default TimeLimitSelector; 
 ```
 
 ---
 
 ```typescript
 // src/components/game/settings/OperationToggle.tsx
-import React from 'react'; import type { GameAction } from '@/store'; import { Operation } from '@/types'; export const OperationToggle: React.FC<{ dispatch: React.Dispatch<GameAction>; }> = ({ dispatch }) => ( <div className='flex items-center justify-between'> <label className='text-sm text-gray-700' htmlFor='operation'> Operation: </label> <select id='operation' onChange={(e) => dispatch({ type: 'SET_OPERATION', payload: e.target.value as Operation, }) } className='rounded-md border p-2' > <option className='bg-blue-500 p-1 text-white' value='add'> Add </option> <option className='bg-gray-300 p-1' value='minus'> Minus </option> </select> </div> ); export default OperationToggle; 
-```
-
----
-
-```typescript
-// src/components/game/settings/StartButton.tsx
-import React from 'react'; import type { GameAction } from '@/store'; export const StartButton: React.FC<{ dispatch: React.Dispatch<GameAction>; }> = ({ dispatch }) => ( <button onClick={() => dispatch({ type: 'START_GAME' })} className='rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700' > Start Game </button> ); export default StartButton; 
+import React from 'react'; import type { GameAction } from '@/types'; import { Operation } from '@/types'; export const OperationToggle: React.FC<{ dispatch: React.Dispatch<GameAction>; }> = ({ dispatch }) => ( <div className='flex items-center justify-between'> <label className='text-sm text-gray-700' htmlFor='operation'> Operation: </label> <select id='operation' onChange={(e) => dispatch({ type: 'UPDATE_OPERATION', payload: { operation: e.target.value as Operation, }, }) } className=' focus:shadow-outline w-2/3 appearance-none rounded-md border p-2 leading-tight text-gray-700 focus:outline-none' > <option className='bg-blue-500 p-1 text-white' value='add'> Addition </option> <option className='bg-gray-300 p-1' value='minus'> Subraction </option> </select> </div> ); export default OperationToggle; 
 ```
 
 ---
 
 ```typescript
 // src/components/game/settings/DifficultySelector.tsx
-import React from 'react'; import type { GameAction } from '@/store'; export const DifficultySelector: React.FC<{ dispatch: React.Dispatch<GameAction>; }> = ({ dispatch }) => ( <div className='flex items-center justify-between'> <label htmlFor='difficulty' className='text-sm text-gray-700'> Difficulty Level (0-9): </label> <input id='difficulty' className='w-2/3' type='range' min={0} max={9} onChange={(e) => dispatch({ type: 'SET_DIFFICULTY', payload: parseInt(e.target.value, 10), }) } /> </div> ); export default DifficultySelector; 
+import React from 'react'; import type { GameAction } from '@/types'; import { difficultyRange } from '@/types'; export const DifficultySelector: React.FC<{ dispatch: React.Dispatch<GameAction>; difficulty: difficultyRange; }> = ({ dispatch, difficulty }) => { const handleSetDifficulty = (event: React.ChangeEvent<HTMLInputElement>) => { dispatch({ type: 'UPDATE_DIFFICULTY', payload: { difficulty: mapToDifficultyRange(parseInt(event.target.value)), }, }); }; return ( <div className='flex flex-row items-center justify-between'> <label htmlFor='difficulty' className='text-sm text-gray-700'> Amount: </label> <input id='difficulty' className='focus:shadow-outline w-2/3 appearance-none rounded leading-tight text-gray-700 focus:outline-none' type='number' min={1} max={9} onChange={handleSetDifficulty} defaultValue={difficulty} /> </div> ); }; export default DifficultySelector; function mapToDifficultyRange(newD: number): difficultyRange { switch (newD) { case 1: return 1; case 2: return 2; case 3: return 3; case 4: return 4; case 5: return 5; case 6: return 6; case 7: return 7; case 8: return 8; case 9: return 9; default: return 1; } } 
 ```
 
 ---
 
 ```typescript
 // src/components/game/display/PauseButton.tsx
-import React from 'react'; import { GameAction } from '@/store'; export const PauseButton: React.FC<{ dispatch: React.Dispatch<GameAction>; gameStatus: string; }> = ({ dispatch, gameStatus }) => ( <button className={`${ gameStatus === 'started' ? 'bg-red-500' : 'bg-green-500' } hover:${ gameStatus === 'started' ? 'bg-red-700' : 'bg-green-700' } rounded px-4 py-2 font-bold text-white`} onClick={() => dispatch({ type: gameStatus === 'started' ? 'PAUSE_GAME' : 'RESUME_GAME', }) } > {gameStatus === 'started' ? 'Pause' : 'Resume'} </button> ); export default PauseButton; 
+import React from 'react'; import { GameAction } from '@/types'; export const PauseButton: React.FC<{ dispatch: React.Dispatch<GameAction>; isPaused: boolean; }> = ({ dispatch, isPaused }) => ( <button className={`${isPaused === false ? 'bg-red-500' : 'bg-green-500'} hover:${ isPaused === false ? 'bg-red-700' : 'bg-green-700' } rounded px-4 py-2 font-bold text-white`} onClick={() => dispatch({ type: isPaused === false ? 'PAUSE' : 'RESUME', }) } > {isPaused === false ? 'Pause' : 'Resume'} </button> ); export default PauseButton; 
 ```
 
 ---
 
 ```typescript
 // src/components/game/display/InputCell.tsx
-import React, { useEffect, useRef, useState } from 'react'; import { GameAction } from '@/store'; export const InputCell: React.FC<{ index: number; dispatch: React.Dispatch<GameAction>; timeLimit: number; onTimeOut: () => void; }> = ({ index, dispatch, timeLimit, onTimeOut }) => { const [inputValue, setInputValue] = useState<string>(''); const timerRef = useRef<NodeJS.Timeout | null>(null); const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => { setInputValue(event.target.value); }; const handleInputBlur = () => { dispatch({ type: 'SET_INPUT', payload: { index, value: Number(inputValue) }, }); }; useEffect(() => { if (timeLimit > 0) { timerRef.current = setTimeout(() => { onTimeOut(); }, timeLimit * 1000); } return () => { if (timerRef.current) clearTimeout(timerRef.current); }; }, []); return ( <input className='border rounded-md p-2' type='number' value={inputValue} onChange={handleInputChange} onBlur={handleInputBlur} min={0} max={9} /> ); }; export default InputCell; 
-```
-
----
-
-```typescript
-// src/components/game/display/InputRow.tsx
-import React from 'react'; import { GameAction } from '@/store'; import { InputCell } from './InputCell'; export const InputRow: React.FC<{ dispatch: React.Dispatch<GameAction>; timeLimit: number; }> = ({ dispatch, timeLimit }) => ( <div className='input-row'> {Array.from({ length: 10 }).map((_, index) => ( <InputCell key={index} index={index} dispatch={dispatch} timeLimit={timeLimit} onTimeOut={() => dispatch({ type: 'END_ROUND' })} /> ))} </div> ); export default InputRow; 
-```
-
----
-
-```typescript
-// src/components/game/display/IntegerRow.tsx
-import React from 'react'; export const IntegerRow: React.FC<{ integers: number[] }> = ({ integers }) => ( <div className='integer-row'> {integers.map((num, idx) => ( <div key={idx} className='integer-cell'> {num} </div> ))} </div> ); export default IntegerRow; 
+ import React, { useEffect, useRef, useState } from 'react'; import { GameAction } from '@/types'; export const InputCell: React.FC<{ challengeIndex: number; correct?: boolean; attempt?: number; dispatch: React.Dispatch<GameAction>; isCurrent?: boolean; }> = ({ challengeIndex, dispatch, correct, attempt, isCurrent }) => { const [inputValue, setInputValue] = useState<number | undefined>(attempt); useEffect(() => { setInputValue(attempt); }, [attempt]); const inputRef = useRef<HTMLInputElement | null>(null); const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => { const newValue = parseInt(event.target.value); if (newValue >= 0 && newValue <= 9) { setInputValue(newValue); dispatch({ type: 'ATTEMPT', payload: { index: challengeIndex, attempt: newValue }, }); dispatch({ type: 'RESUME' }); } else { setInputValue(0); } }; useEffect(() => { if (isCurrent && inputRef.current) { inputRef.current.focus(); } }, [isCurrent]); const classname = ' sm:mx-2 border border-gray-300 h-full w-full text-center px-2 py-1 '; if (correct === false) { return <div className={`${classname} text-red-500`}>{attempt}</div>; } else if (correct === true) { return <div className={`${classname} text-green-500`}>{attempt}</div>; } else if (isCurrent) { return ( <input ref={inputRef} className={`${classname} text-gray-700`} contentEditable={true} onChange={handleInputChange} value={inputValue} /> ); } else { return ( <div className={`${classname} bg-slate-100 text-gray-700`}>{attempt}</div> ); } }; export default InputCell; 
 ```

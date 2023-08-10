@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { GameAction } from '@/state';
+import type { GameAction } from '@/types';
 
 export const TimeLimitSelector: React.FC<{
   dispatch: React.Dispatch<GameAction>;
@@ -18,7 +18,7 @@ export const TimeLimitSelector: React.FC<{
       max={10}
       onChange={(e) =>
         dispatch({
-          type: 'SET_TIME_LIMIT',
+          type: 'UPDATE_TIME_LIMIT',
           payload: { timeLimit: parseInt(e.target.value) },
         })
       }

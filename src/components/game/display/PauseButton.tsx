@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { GameAction } from '@/state';
+import { GameAction } from '@/types';
 
 export const PauseButton: React.FC<{
   dispatch: React.Dispatch<GameAction>;
@@ -12,7 +12,7 @@ export const PauseButton: React.FC<{
     } rounded px-4 py-2 font-bold text-white`}
     onClick={() =>
       dispatch({
-        type: isPaused === false ? 'PAUSE_GAME' : 'RESUME_GAME',
+        type: isPaused === false ? 'PAUSE' : 'RESUME',
       })
     }
   >

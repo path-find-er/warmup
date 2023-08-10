@@ -2,10 +2,9 @@ import React, { useEffect, useRef } from 'react';
 
 import InputCell from '@/components/game/display/InputCell';
 
-import { GameAction } from '@/state';
-
 import PauseButton from './display/PauseButton';
 
+import { GameAction } from '@/types';
 import { GameState } from '@/types';
 
 interface GameDisplayProps {
@@ -15,11 +14,12 @@ interface GameDisplayProps {
 
 const LevelDisplay: React.FC<GameDisplayProps> = ({ state, dispatch }) => {
   const {
-    level: { timeLimit, challenges, currentChallenge },
+    level: { challenges, currentChallenge },
+    settings: { timeLimit },
     isPaused,
   } = state;
 
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (timeLimit > 0 && !isPaused) {
       timerRef.current = setTimeout(() => {
@@ -39,7 +39,10 @@ const LevelDisplay: React.FC<GameDisplayProps> = ({ state, dispatch }) => {
     <>
       <div className='my-4 flex w-full flex-row rounded bg-white p-4 shadow-md'>
         {challenges.map((challenge, index) => (
-          <div key={index} className='flex w-full flex-col items-center'>
+          <div
+            key={`${index}-challenge-${challenge.test}`}
+            className='flex w-full flex-col items-center'
+          >
             <div className='w-full border border-gray-300 px-2 py-1 text-center text-gray-700 sm:mx-2'>
               {challenge.test}
             </div>

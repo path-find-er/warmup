@@ -1,7 +1,7 @@
 // src/components/game/display/InputCell.tsx
 import React, { useEffect, useRef, useState } from 'react';
 
-import { GameAction } from '@/state';
+import { GameAction } from '@/types';
 
 export const InputCell: React.FC<{
   challengeIndex: number;
@@ -27,7 +27,7 @@ export const InputCell: React.FC<{
         type: 'ATTEMPT',
         payload: { index: challengeIndex, attempt: newValue },
       });
-      dispatch({ type: 'RESUME_GAME' });
+      dispatch({ type: 'RESUME' });
     } else {
       setInputValue(0);
     }

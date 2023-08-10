@@ -1,12 +1,10 @@
 import React from 'react';
 
-import type { GameAction } from '@/state';
-
 import DifficultySelector from './settings/DifficultySelector';
 import OperationToggle from './settings/OperationToggle';
 import TimeLimitSelector from './settings/TimeLimitSelector';
 
-import { GameState } from '@/types';
+import { GameAction, GameState } from '@/types';
 
 type GameSettingsProps = {
   dispatch: React.Dispatch<GameAction>;
@@ -17,12 +15,15 @@ const GameSettings: React.FC<GameSettingsProps> = ({ dispatch, state }) => {
     <div className='mb-4  flex w-full max-w-md flex-col gap-2 rounded bg-white p-4 shadow-md'>
       <DifficultySelector
         dispatch={dispatch}
-        difficulty={state.level.difficulty}
+        difficulty={state.settings.difficulty}
       />
-      <OperationToggle dispatch={dispatch} />
+      <OperationToggle
+        dispatch={dispatch}
+        operation={state.settings.operation}
+      />
       <TimeLimitSelector
         dispatch={dispatch}
-        timeLimit={state.level.timeLimit}
+        timeLimit={state.settings.timeLimit}
       />
     </div>
   );

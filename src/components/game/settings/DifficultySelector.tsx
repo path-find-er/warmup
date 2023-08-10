@@ -1,7 +1,6 @@
 import React from 'react';
 
-import type { GameAction } from '@/state';
-
+import type { GameAction } from '@/types';
 import { difficultyRange } from '@/types';
 
 export const DifficultySelector: React.FC<{
@@ -10,7 +9,7 @@ export const DifficultySelector: React.FC<{
 }> = ({ dispatch, difficulty }) => {
   const handleSetDifficulty = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
-      type: 'SET_DIFFICULTY',
+      type: 'UPDATE_DIFFICULTY',
       payload: {
         difficulty: mapToDifficultyRange(parseInt(event.target.value)),
       },

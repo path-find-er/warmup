@@ -14,7 +14,7 @@ const ScoreHistory: React.FC<ScoreHistoryProps> = ({ previousScores }) => {
           <p className='text-gray-500'>No scores available.</p>
         ) : (
           previousScores.map((score, index) => (
-            <li key={index} className='text-gray-700'>
+            <li key={`score-${index}`} className='text-gray-700'>
               Round {index + 1}: {score} out of 10
             </li>
           ))

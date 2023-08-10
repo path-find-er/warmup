@@ -8,9 +8,6 @@ export type Operation = 'add' | 'subtract';
 export type difficultyRange = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export type Level = {
-  difficulty: difficultyRange;
-  operation: Operation;
-  timeLimit: number;
   challenges: Challenge[];
   currentChallenge: number;
 };
@@ -20,8 +17,52 @@ export type scores = {
   previousScores: number[];
 };
 
+export type GameSettings = {
+  difficulty: difficultyRange;
+  timeLimit: number;
+  operation: Operation;
+};
+
 export type GameState = {
   level: Level;
   scores: scores;
+  settings: GameSettings;
   isPaused: boolean;
 };
+
+export type GameAction =
+  | {
+      type: 'UPDATE_DIFFICULTY';
+      payload: {
+        difficulty: difficultyRange;
+      };
+    }
+  | {
+      type: 'UPDATE_OPERATION';
+      payload: {
+        operation: Operation;
+      };
+    }
+  | {
+      type: 'UPDATE_TIME_LIMIT';
+      payload: {
+        timeLimit: number;
+      };
+    }
+  | {
+      type: 'ATTEMPT';
+      payload: {
+        index: number;
+        attempt: number;
+      };
+    }
+  | {
+      type: 'TOO_SLOW';
+      payload: {
+        index: number;
+        attempt: number;
+      };
+    }
+  | { type: 'RESUME' }
+  | { type: 'PAUSE' }
+  | { type: 'END_ROUND' };
