@@ -32,7 +32,7 @@ export const initialState: GameState = {
     currentScore: 0,
     previousScores: [],
   },
-  isPaused: false,
+  isPaused: true,
 };
 
 export type GameAction =
