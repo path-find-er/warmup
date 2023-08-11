@@ -13,14 +13,20 @@ const Game: React.FC = () => {
   const [state, dispatch] = useReducer(gameReducer, initialState);
 
   return (
-    <div className='flex h-screen w-screen flex-col-reverse items-center justify-center bg-gray-100 p-8 sm:flex-col'>
-      <Settings dispatch={dispatch} state={state} />
-      <Level dispatch={dispatch} state={state} />
-      <Scores
-        currentScore={state.scores.currentScore}
-        previousScores={state.scores.previousScores}
-      />
-    </div>
+    <>
+      <div className='mt-0 flex h-screen w-screen flex-col-reverse items-center justify-end bg-gray-100 px-8 py-3 sm:flex-col'>
+        <Settings dispatch={dispatch} state={state} />
+
+        <Level dispatch={dispatch} state={state} />
+        <Scores
+          currentScore={state.scores.currentScore}
+          previousScores={state.scores.previousScores}
+        />
+        <span className='font-mono text-xs text-slate-400 hover:text-slate-900 sm:my-4'>
+          Hint: (value + 10) % 10
+        </span>
+      </div>
+    </>
   );
 };
 
