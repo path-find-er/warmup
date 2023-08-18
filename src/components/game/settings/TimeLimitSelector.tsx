@@ -14,10 +14,12 @@ export const TimeLimitSelector: React.FC<{
       >
         Time Limit:
       </label>
-      <p className='mb-2 text-xs'>
-        Set a time limit (in seconds) for each input. Will decrease as you
-        complete more questions.
-      </p>
+      <span className='text-xs text-slate-400 hover:text-slate-900 sm:my-4'>
+        <p className='mb-2 text-xs'>
+          Set a time limit (in seconds) for each input. Will decrease as you
+          complete more questions.
+        </p>
+      </span>
     </div>
     <label htmlFor='timeLimit' className='text-sm text-gray-700'></label>
     <input

@@ -26,10 +26,12 @@ export const OperationToggle: React.FC<{
         >
           Operation:
         </label>
-        <p className='mb-2 text-xs'>
-          Choose either "Addition" or "Subtraction" for the arithmetic
-          operation. Will switch each round.
-        </p>
+        <span className='text-xs text-slate-400 hover:text-slate-900 sm:my-4'>
+          <p className='mb-2 text-xs'>
+            Choose either "Addition" or "Subtraction" for the arithmetic
+            operation. Will switch each round.
+          </p>
+        </span>
       </div>
       <button
         id='operation'

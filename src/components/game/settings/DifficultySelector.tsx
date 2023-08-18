@@ -25,10 +25,12 @@ export const DifficultySelector: React.FC<{
         >
           Amount:
         </label>
-        <p className='mb-2 text-xs'>
-          Select a level from 0 to 9; this determines the number to add or
-          subtract from each integer. Will increase as after each level.
-        </p>
+        <span className='text-xs text-slate-400 hover:text-slate-900 sm:my-4'>
+          <p className='mb-2 text-xs'>
+            Select a level from 0 to 9; this determines the number to add or
+            subtract from each integer. Will increase as after each level.
+          </p>
+        </span>
       </div>
       <input
         id='difficulty'

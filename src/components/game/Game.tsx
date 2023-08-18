@@ -22,9 +22,6 @@ const Game: React.FC = () => {
           currentScore={state.scores.currentScore}
           previousScores={state.scores.previousScores}
         />
-        <span className='font-mono text-xs text-slate-400 hover:text-slate-900 sm:my-4'>
-          Hint: (value + 10) % 10
-        </span>
       </div>
     </>
   );

@@ -40,6 +40,10 @@ const Level: React.FC<LevelProps> = ({ state, dispatch }) => {
 
   return (
     <div className='my-5 flex flex-col items-center justify-center'>
+      <span className='text-center font-mono text-xs text-slate-400 hover:text-slate-900 sm:my-4'>
+        (value + 10) % 10
+        <p>The result must be within the 0-9 range.</p>
+      </span>
       <div className='my-4 flex w-full flex-row rounded bg-white p-4 shadow-md'>
         {challenges.map((challenge, index) => (
           <div
