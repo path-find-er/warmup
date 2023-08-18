@@ -17,13 +17,22 @@ export const DifficultySelector: React.FC<{
   };
 
   return (
-    <div className='flex flex-row items-center justify-between'>
-      <label htmlFor='difficulty' className='text-sm text-gray-700'>
-        Amount:
-      </label>
+    <div className='flex flex-col items-center justify-between'>
+      <div>
+        <label
+          htmlFor='difficulty'
+          className='text-sm font-semibold text-gray-700'
+        >
+          Amount:
+        </label>
+        <p className='mb-2 text-xs'>
+          Select a level from 0 to 9; this determines the number to add or
+          subtract from each integer. Will increase as after each level.
+        </p>
+      </div>
       <input
         id='difficulty'
-        className='focus:shadow-outline w-2/3 appearance-none rounded leading-tight text-gray-700 focus:outline-none'
+        className='focus:shadow-outline w-full appearance-none rounded leading-tight text-gray-700 focus:outline-none'
         type='number'
         min={1}
         max={9}

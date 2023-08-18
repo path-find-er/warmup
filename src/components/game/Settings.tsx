@@ -17,6 +17,7 @@ const Settings: React.FC<SettingsProps> = ({ dispatch, state }) => {
         dispatch={dispatch}
         difficulty={state.settings.difficulty}
       />
+
       <OperationToggle
         dispatch={dispatch}
         operation={state.settings.operation}

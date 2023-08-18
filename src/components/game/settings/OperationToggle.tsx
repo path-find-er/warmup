@@ -18,16 +18,25 @@ export const OperationToggle: React.FC<{
   };
 
   return (
-    <div className='flex items-center justify-between'>
-      <label className='text-sm text-gray-700' htmlFor='operation'>
-        Operation:
-      </label>
+    <div className='flex flex-col items-center justify-between'>
+      <div className='w-full'>
+        <label
+          htmlFor='difficulty'
+          className='text-sm font-semibold text-gray-700'
+        >
+          Operation:
+        </label>
+        <p className='mb-2 text-xs'>
+          Choose either "Addition" or "Subtraction" for the arithmetic
+          operation. Will switch each round.
+        </p>
+      </div>
       <button
         id='operation'
         onClick={toggleOperation}
         className={`${
           isAddition ? 'bg-blue-200' : 'bg-rose-100'
-        } focus:shadow-outline w-2/3 cursor-pointer appearance-none rounded-md p-2 leading-tight text-gray-700 transition duration-300 ease-in-out focus:outline-none`}
+        } focus:shadow-outline w-full cursor-pointer appearance-none rounded-md p-2 leading-tight text-gray-700 transition duration-300 ease-in-out focus:outline-none`}
       >
         {isAddition ? 'Addition' : 'Subtraction'}
       </button>

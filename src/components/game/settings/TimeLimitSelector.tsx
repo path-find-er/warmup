@@ -6,13 +6,23 @@ export const TimeLimitSelector: React.FC<{
   dispatch: React.Dispatch<GameAction>;
   timeLimit: number;
 }> = ({ dispatch, timeLimit }) => (
-  <div className='flex items-center justify-between'>
-    <label htmlFor='timeLimit' className='text-sm text-gray-700'>
-      Time Limit:
-    </label>
+  <div className='flex flex-col items-center justify-between'>
+    <div className='w-full'>
+      <label
+        htmlFor='difficulty'
+        className='text-sm font-semibold text-gray-700'
+      >
+        Time Limit:
+      </label>
+      <p className='mb-2 text-xs'>
+        Set a time limit (in seconds) for each input. Will decrease as you
+        complete more questions.
+      </p>
+    </div>
+    <label htmlFor='timeLimit' className='text-sm text-gray-700'></label>
     <input
       id='timeLimit'
-      className='focus:shadow-outline w-2/3 appearance-none rounded leading-tight text-gray-700 focus:outline-none'
+      className='focus:shadow-outline w-full appearance-none rounded leading-tight text-gray-700 focus:outline-none'
       type='number'
       min={1}
       max={10}
