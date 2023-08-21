@@ -44,12 +44,12 @@ export const InputCell: React.FC<{
   }, [isCurrent]); // Dependency array ensures this effect runs when isCurrent changes
 
   const classname =
-    ' sm:mx-2 border border-gray-300 h-full w-full text-center px-2 py-1 ';
+    'h-7 sm:mx-2 border border-gray-300 w-full text-center px-2 py-1 bg-opacity-20 ';
 
   if (correct === false) {
-    return <div className={`${classname} text-red-500`}>{attempt}</div>;
+    return <div className={`${classname} bg-red-500`}>{attempt}</div>;
   } else if (correct === true) {
-    return <div className={`${classname} text-green-500`}>{attempt}</div>;
+    return <div className={`${classname} bg-green-500`}>{attempt}</div>;
   } else if (isCurrent) {
     return (
       <input

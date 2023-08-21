@@ -1,20 +1,33 @@
 import React from 'react';
 
 import type { GameAction } from '@/types';
-import { Operation } from '@/types';
+import { Operation, operationOptions } from '@/types';
+
+const updateOperation = (operation: Operation): Operation => {
+  // get the index of the current operation
+  const currentIndex = operationOptions.indexOf(operation);
+  // get the next operation
+  const nextIndex = (currentIndex + 1) % operationOptions.length;
+  // return the next operation
+  return operationOptions[nextIndex];
+};
 
 export const OperationToggle: React.FC<{
   dispatch: React.Dispatch<GameAction>;
-  operation: Operation; // New prop
+  operation: Operation;
 }> = ({ dispatch, operation }) => {
-  const isAddition = operation === 'add';
   const toggleOperation = () => {
     dispatch({
       type: 'UPDATE_OPERATION',
       payload: {
-        operation: isAddition ? 'subtract' : ('add' as Operation),
+        operation: updateOperation(operation),
       },
     });
+  };
+
+  const colorClass: Record<Operation, string> = {
+    add: 'bg-blue-200',
+    subtract: 'bg-amber-100',
   };
 
   return (
@@ -36,11 +49,9 @@ export const OperationToggle: React.FC<{
       <button
         id='operation'
         onClick={toggleOperation}
-        className={`${
-          isAddition ? 'bg-blue-200' : 'bg-rose-100'
-        } focus:shadow-outline w-full cursor-pointer appearance-none rounded-md p-2 leading-tight text-gray-700 transition duration-300 ease-in-out focus:outline-none`}
+        className={`${colorClass[operation]} focus:shadow-outline w-full cursor-pointer appearance-none rounded-md p-2 leading-tight text-gray-700 transition duration-300 ease-in-out focus:outline-none`}
       >
-        {isAddition ? 'Addition' : 'Subtraction'}
+        {operation}
       </button>
     </div>
   );

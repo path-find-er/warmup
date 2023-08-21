@@ -12,7 +12,7 @@ type SettingsProps = {
 };
 const Settings: React.FC<SettingsProps> = ({ dispatch, state }) => {
   return (
-    <div className='mb-4  flex w-full max-w-md flex-col gap-2 rounded bg-white p-4 shadow-md'>
+    <div className='rounded-xl px-4 py-5 shadow-sm shadow-slate-800'>
       <DifficultySelector
         dispatch={dispatch}
         difficulty={state.settings.difficulty}

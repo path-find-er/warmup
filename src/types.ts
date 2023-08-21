@@ -1,10 +1,13 @@
 export type Challenge = {
   test: number;
+  correctAnswer?: number;
   correct?: boolean;
   attempt?: number;
 };
 
-export type Operation = 'add' | 'subtract';
+export const operationOptions = ['add', 'subtract'] as const;
+
+export type Operation = (typeof operationOptions)[number];
 export type difficultyRange = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export type Level = {

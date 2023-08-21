@@ -1,9 +1,9 @@
 import { Draft, produce } from 'immer';
 
 import {
+  correctAnswerIs,
   generateInitialLevel,
   generateSettings,
-  next_level,
   validateAnswer,
 } from '@/utils';
 
@@ -28,8 +28,29 @@ const gameReducer = produce((draft: Draft<GameState>, action: GameAction) => {
       draft.isPaused = false;
       break;
     case 'TOO_SLOW': {
-      const { index, attempt } = action.payload;
-      next_level(draft, false, index, attempt);
+      const { index } = action.payload;
+      const correctAnswer = correctAnswerIs(
+        draft.level.challenges[index].test,
+        draft.settings.difficulty,
+        draft.settings.operation
+      );
+      draft.level.challenges[index].correct = false;
+      draft.level.challenges[index].attempt = undefined;
+      draft.level.challenges[index].correctAnswer = correctAnswer;
+
+      const next_Index = (index + 11) % 10;
+
+      draft.level.currentChallenge = next_Index;
+
+      if (next_Index === 0) {
+        draft.scores.previousScores.push({
+          score: draft.scores.currentScore,
+          settings: draft.settings,
+        });
+        draft.scores.currentScore = 0;
+        draft.level = generateInitialLevel();
+        draft.settings = generateSettings(draft.scores.previousScores.length);
+      }
       break;
     }
 
@@ -44,13 +65,30 @@ const gameReducer = produce((draft: Draft<GameState>, action: GameAction) => {
       break;
     case 'ATTEMPT': {
       const { index, attempt } = action.payload;
-      const valid = validateAnswer(
+      const [valid, correctAnswer] = validateAnswer(
         draft.level.challenges[index].test,
         attempt,
         draft.settings.difficulty,
         draft.settings.operation
       );
-      next_level(draft, valid, index, attempt);
+
+      draft.scores.currentScore += valid ? 1 : 0;
+      draft.level.challenges[index].correct = valid;
+      draft.level.challenges[index].attempt = attempt;
+      draft.level.challenges[index].correctAnswer = correctAnswer;
+
+      // set the next index from 0 to 9
+      const next_Index = (index + 11) % 10;
+      draft.level.currentChallenge = next_Index;
+      if (next_Index === 0) {
+        draft.scores.previousScores.push({
+          score: draft.scores.currentScore,
+          settings: draft.settings,
+        });
+        draft.scores.currentScore = 0;
+        draft.level = generateInitialLevel();
+        draft.settings = generateSettings(draft.scores.previousScores.length);
+      }
       break;
     }
   }

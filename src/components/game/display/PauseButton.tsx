@@ -9,7 +9,7 @@ export const PauseButton: React.FC<{
   <button
     className={`${isPaused === false ? 'bg-red-500' : 'bg-green-500'} hover:${
       isPaused === false ? 'bg-red-700' : 'bg-green-700'
-    } rounded px-4 py-2 font-bold text-white`}
+    } max-h-min max-w-min rounded px-4 py-2 font-bold text-white`}
     onClick={() =>
       dispatch({
         type: isPaused === false ? 'PAUSE' : 'RESUME',

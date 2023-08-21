@@ -1,6 +1,4 @@
-import { Draft } from 'immer';
-
-import { difficultyRange, GameState, Level, Operation } from '@/types';
+import { difficultyRange, Level, Operation } from '@/types';
 
 export const generateRandomIntegers = (): number[] => {
   return Array.from({ length: 10 }, () => Math.floor(Math.random() * 10));
@@ -10,17 +8,34 @@ export const normalizeAnswer = (value: number): number => {
   return (value + 10) % 10;
 };
 
+export const correctAnswerIs = (
+  integer: number,
+  difficulty: number,
+  operation: Operation
+): number => {
+  switch (operation) {
+    case 'add': {
+      const correctAnswer = normalizeAnswer(integer + difficulty);
+      return correctAnswer;
+    }
+    case 'subtract': {
+      const correctAnswer = normalizeAnswer(integer - difficulty);
+      return correctAnswer;
+    }
+    default:
+      return 0;
+  }
+};
+
 export const validateAnswer = (
   integer: number,
   userValue: number,
   difficulty: number,
   operation: Operation
-): boolean => {
-  const correctValue =
-    operation === 'add'
-      ? normalizeAnswer(integer + difficulty)
-      : normalizeAnswer(integer - difficulty);
-  return correctValue === userValue;
+): [boolean, number] => {
+  const correctAnswer = correctAnswerIs(integer, difficulty, operation);
+  const valid = normalizeAnswer(correctAnswer) === userValue;
+  return [valid, correctAnswer];
 };
 
 export const generateRandomChallenges = () => {
@@ -52,25 +67,3 @@ export const generateSettings = (numCompletedLevels = 0) => {
     timeLimit: Math.max(5 - numCompletedLevels * 0.2, 2),
   };
 };
-
-export function next_level(
-  draft: Draft<GameState>,
-  valid: boolean,
-  index: number,
-  attempt: number
-) {
-  draft.scores.currentScore += valid ? 1 : 0;
-  if (index <= 8) {
-    draft.level.challenges[index].attempt = attempt;
-    draft.level.challenges[index].correct = valid;
-    draft.level.currentChallenge = index + 1;
-  } else {
-    draft.scores.previousScores.push({
-      score: draft.scores.currentScore,
-      settings: draft.settings,
-    });
-    draft.scores.currentScore = 0;
-    draft.level = generateInitialLevel();
-    draft.settings = generateSettings(draft.scores.previousScores.length);
-  }
-}

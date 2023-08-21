@@ -14,9 +14,9 @@ const Game: React.FC = () => {
 
   return (
     <>
-      <div className='mt-0 flex h-screen w-screen flex-col-reverse items-center justify-end bg-gray-100 px-8 py-3 sm:flex-col'>
-        <Settings dispatch={dispatch} state={state} />
+      <Settings dispatch={dispatch} state={state} />
 
+      <div className=''>
         <Level dispatch={dispatch} state={state} />
         <Scores
           currentScore={state.scores.currentScore}
